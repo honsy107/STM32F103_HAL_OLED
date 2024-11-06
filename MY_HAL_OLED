@@ -39,7 +39,7 @@ void MY_OLED_Data(uint8_t Data)
 
 /*
 对OLED发送多个数据。
-uint8_t Data[]: 发送的十六进制数组。
+uint8_t Data[]: 发送的十六进制数据数组。
 int i: 数组长度。
 */
 void MY_OLED_DataM(uint8_t Data[], int Num)
