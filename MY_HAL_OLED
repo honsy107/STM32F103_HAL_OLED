@@ -1,48 +1,85 @@
-#define OLED_address 0x78
-HAL_StatusTypeDef Response__1;
-
 void MY_OLED_Command(uint8_t Command)
 {
-	uint8_t data[2] = {0x00, Command};
-	HAL_I2C_Master_Transmit(&hi2c1, OLED_address, data, 2, 1000);
+	uint8_t Temp[2] = {0x00, Command};
+	HAL_I2C_Master_Transmit(&hi2c1, OLED_address, Temp, 2, 1000);
+}
+
+void MY_OLED_CommandM(uint8_t Command[], int i)
+{
+	uint8_t Temp[i+1];
+	Temp[0] = 0x00;
+	for (int ii=0; ii<i; ii++)
+	{
+		Temp[ii+1] = Command[ii];
+	}
+	HAL_I2C_Master_Transmit(&hi2c1, OLED_address, Temp, i, 1000);
 }
 
 void MY_OLED_Data(uint8_t Data)
 {
-	uint8_t data[2] = {0x40, Data};
-	HAL_I2C_Master_Transmit(&hi2c1, OLED_address, data, 2, 1000);
+	uint8_t Temp[2] = {0x40, Data};
+	HAL_I2C_Master_Transmit(&hi2c1, OLED_address, Temp, 2, 1000);
 }
 
-void MY_OLED_DataList(uint8_t Data[], int i)
+void MY_OLED_DataM(uint8_t Data[], int i)
 {
-	uint8_t data[i+1];
-	int ii;
-	for (ii=1; ii<=i; ii++)
+	uint8_t Temp[i+1];
+	Temp[0] = 0x40;
+	for (int ii=0; ii<i; ii++)
 	{
-		data[ii] = Data[ii-1];
+		Temp[ii+1] = Data[ii];
 	}
-	HAL_I2C_Master_Transmit(&hi2c1, OLED_address, data, i, 1000);
+	HAL_I2C_Master_Transmit(&hi2c1, OLED_address, Temp, i+1, 1000);
 }
 
 void MY_OLED_SetCursor(uint8_t x, uint8_t y)
 {
-	MY_OLED_Command( 0xB0|y );
-	MY_OLED_Command( 0x10|((x&0xF0)>>4) );
-	MY_OLED_Command( 0x00|(x&0x0F ));
+//	MY_OLED_Command( 0xB0|y );
+//	MY_OLED_Command( 0x10|((x&0xF0)>>4) );
+//	MY_OLED_Command( 0x00|(x&0x0F) );
+	uint8_t Temp[4] = {0x00, 0xB0|y, 0x10|((x&0xF0)>>4), 0x00|(x&0x0F)};
+	HAL_I2C_Master_Transmit(&hi2c1, OLED_address, Temp, 4, 1000);
 }
 
+//void MY_OLED_Clear(void)
+//{  
+//	uint8_t i, j, data[128] = {0x00};
+//	for (j = 0; j < 8; j++)
+//	{
+//		MY_OLED_SetCursor(0, j);
+//		for (i = 0; i < 128; i++)
+//		{
+//			MY_OLED_Data(0xF0);
+//			MY_OLED_DataM(data, 128);
+//		}
+//	}
+//}
 
-void MY_OLED_Clear(void)
-{  
-	uint8_t i, j, data[128] = {0xFF};
-	for (j = 0; j < 8; j++)
+
+void MY_OLED_Full(uint8_t data)
+{
+	uint8_t i, Temp[128];
+	for(i=0; i<128; i++)
 	{
-		MY_OLED_SetCursor(0, j);
-		for (i = 0; i < 128; i++)
+		Temp[i] = data;
+	}
+	for(i=0; i<8; i++)
+	{
+		MY_OLED_SetCursor(0, i);
+		MY_OLED_DataM(Temp, 128);
+	}
+}
+
+void MY_OLED_ShowP(uint8_t data[], int _Long, int _Hight, int _X, int _Y)
+{
+	for(uint8_t y=0, Temp[_Long]; y<_Hight; y++)
+	{
+		for(int x=0; x<_Long; x++)
 		{
-			MY_OLED_Data(0x00);
-			//MY_OLED_DataList(data, 128);
+			Temp[x] = data[x+y*_Hight];
 		}
+		MY_OLED_SetCursor(_X, _Y+y);
+		MY_OLED_DataM(Temp, _Long);
 	}
 }
 
@@ -50,10 +87,9 @@ void MY_OLED_Clear(void)
 void MY_OLED_Init(void)
 {
 	uint8_t DA[23] = {0xAE, 0xD5, 0x80, 0xA8, 0x3F, 0xD3, 0x00, 0x40, 0xA1, 0xC8, 0xDA, 0x12, 0x81, 0xCF, 0xD9, 0xF1, 0xDB, 0x30, 0xA4, 0xA6, 0x8D, 0x14, 0xAF};
-	int i;
-	for (i=0; i<23; i++)
+	for(int i=0; i<23; i++)
 	{
 		MY_OLED_Command(DA[i]);
 	}
-	MY_OLED_Clear();
+	MY_OLED_Full(0);
 }
