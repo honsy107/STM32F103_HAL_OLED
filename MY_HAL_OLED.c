@@ -1,3 +1,5 @@
+//基于STM32F103 HAL库运行自行打包的用于驱动OLED的一些函数。
+
 /*
 对OLED发送单个命令。
 uint8_t Command: 发送的十六进制命令。
@@ -10,8 +12,8 @@ void MY_OLED_Command(uint8_t Command)
 
 
 /*
-对OLED发送多个命令。
-uint8_t Command[]: 发送的十六进制命令的数组，请不要搞错数据类型。
+对OLED发送多个命令，请不要搞错数据类型。
+uint8_t Command[]: 发送的十六进制命令的数组。
 int Num: 数组长度。
 */
 void MY_OLED_CommandM(uint8_t Command[], int Num)
