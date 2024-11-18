@@ -1,11 +1,8 @@
 #include "main.h"
 #include "i2c.h"
-#include "gpio.h"
-
 
 #ifndef __MYOLED_H__
 #define __MYOLED_H__
-
 
 void MY_OLED_Command(uint8_t Command);
 void MY_OLED_CommandM(uint8_t Command[], int Num);
