@@ -13,6 +13,8 @@ void MY_OLED_Full(uint8_t data);
 void MY_OLED_ShowP(uint8_t data[], int _Long, int _Hight, int _X, int _Y);
 void MY_OLED_Clear(void);
 void MY_OLED_Init(void);
+void MY_OLED_ShowD1(int X, int Y);
+void MY_OLED_ShowSE(char StrE[], int X, int Y);
 
 extern const uint8_t OLED_F8x16[][16];
 extern const uint8_t OLED_Chinese1[][32];
